@@ -18,6 +18,12 @@ import { completeAnalysis, emptyRecord, failAttempt, startAttempt, type ReviewRe
 
 type FetchLike = (input: string, init: RequestInit) => Promise<Response>;
 
+/** Failure messages phrased for the GitHub Action (the defaults address the dashboard server). */
+const ACTION_FAILURE_COPY: Partial<Record<string, string>> = {
+  unauthorized:
+    "Jev rejected the request credentials. Add or update the JEV_API_KEY repository secret (Settings → Secrets and variables → Actions), then re-run this workflow.",
+};
+
 export interface RunReviewOptions {
   github: GitHubClient;
   owner: string;
@@ -99,8 +105,9 @@ export async function runReview(options: RunReviewOptions): Promise<RunReviewRes
 
     if (!result.ok) {
       const copy = ANALYZE_ERROR_COPY[result.kind];
-      log(`Jev analysis failed: ${result.kind}${result.status ? ` (HTTP ${result.status})` : ""}. ${copy.message}`);
-      record = failAttempt(record, { headSha, runUrl, now: now(), kind: result.kind, message: `${copy.title}. ${copy.message}` });
+      const message = ACTION_FAILURE_COPY[result.kind] ?? `${copy.title}. ${copy.message}`;
+      log(`Jev analysis failed: ${result.kind}${result.status ? ` (HTTP ${result.status})` : ""}. ${message}`);
+      record = failAttempt(record, { headSha, runUrl, now: now(), kind: result.kind, message });
       await publish(record);
       return { ok: false, record, summary: renderSummary(record, { reviewerUrl }), warnings };
     }

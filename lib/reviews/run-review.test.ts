@@ -163,3 +163,25 @@ describe("runReview", () => {
     expect(gh.requests.some((r) => r.method !== "GET")).toBe(false);
   });
 });
+
+describe("runReview failure copy", () => {
+  it("tells the workflow owner to fix the repository secret on 401", async () => {
+    const gh = new FakeGitHub();
+    gh.addPull({ number: 5, title: "t", body: null, headSha: SHA_A, files: [] });
+    const github = new GitHubClient({ token: "t", baseUrl: gh.base, fetchImpl: gh.fetch });
+    const result = await runReview({
+      github,
+      owner: "acme",
+      repo: "app",
+      pullNumber: 5,
+      jev: { ...JEV, apiKey: undefined },
+      jevFetch: async () => new Response(JSON.stringify({ code: -1, message: "Sign in", data: null }), { status: 401 }),
+      runUrl: null,
+      reviewerUrl: null,
+      log: () => {},
+    });
+    expect(result.ok).toBe(false);
+    expect(result.record.attempt?.error?.message).toContain("JEV_API_KEY repository secret");
+    expect(result.record.attempt?.error?.message).not.toContain("server environment");
+  });
+});
