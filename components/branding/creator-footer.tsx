@@ -35,7 +35,6 @@ export function CreatorFooter({ creator }: { creator: Creator }) {
 
         <div className="mt-8 flex flex-col gap-2 border-t border-line pt-5 text-[11px] text-fg-subtle sm:flex-row sm:items-center sm:justify-between">
           <p className="font-mono tracking-wide">Next.js × Jev</p>
-          <p>GitHub automation labels are derived by this app; decisions come from Jev.</p>
         </div>
       </div>
     </footer>
