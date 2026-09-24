@@ -1,0 +1,67 @@
+# Jev PR Review
+#
+# On every PR open/update: collect the real PR context (metadata, full paginated
+# file list, diff stats, path-heuristic signals), ask Jev for a structured
+# decision, and publish it as a single PR comment (updated in place), labels,
+# and this job's summary. The Jev PR Reviewer dashboard reads the same comment.
+#
+# Informational by default: the job fails only when the analysis itself fails,
+# never because of the risk score. It blocks merging only if you make it a
+# required status check.
+#
+# Setup: add the repository secret JEV_API_KEY. Optional repository variables:
+# JEV_API_URL (defaults to https://www.jevai.org/api/v1/decisions) and
+# JEV_REVIEWER_URL (dashboard URL, used for the "View detailed review" link).
+
+name: Jev PR Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+# Least privilege for GITHUB_TOKEN:
+#   contents: read       — check out the repository to run the review script
+#   pull-requests: write — read PR files, create/update the review comment, apply labels
+#   issues: write        — create the workflow's labels in the repository (Issues API)
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+# One review per PR at a time; a new push cancels the in-flight review of an older commit.
+concurrency:
+  group: jev-pr-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    name: Jev PR Review
+    # Fork PRs get no secrets and a read-only token, so they can't be reviewed here.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Analyze PR with Jev
+        run: pnpm jev:review
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JEV_API_KEY: ${{ secrets.JEV_API_KEY }}
+          JEV_API_URL: ${{ vars.JEV_API_URL }}
+          JEV_REVIEWER_URL: ${{ vars.JEV_REVIEWER_URL }}

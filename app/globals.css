@@ -1,26 +1,207 @@
 @import "tailwindcss";
 
+/* Class-based dark mode (set by the theme script in layout.tsx). */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+  --canvas: #fafafa;
+  --surface: #ffffff;
+  --surface-2: #f4f4f5;
+  --surface-3: #ebebee;
+  --line: #e4e4e7;
+  --line-strong: #d4d4d8;
+  --fg: #09090b;
+  --fg-muted: #52525b;
+  --fg-subtle: #6b6b75;
+
+  --accent: #4f46e5;
+  --accent-hover: #4338ca;
+  --accent-fg: #ffffff;
+  --accent-soft: #eef2ff;
+  --accent-line: #c7d2fe;
+  --accent-text: #4338ca;
+
+  --risk-low: #059669;
+  --risk-moderate: #d97706;
+  --risk-high: #ea580c;
+  --risk-critical: #dc2626;
+  --risk-low-soft: #ecfdf5;
+  --risk-moderate-soft: #fffbeb;
+  --risk-high-soft: #fff7ed;
+  --risk-critical-soft: #fef2f2;
+  --risk-low-text: #047857;
+  --risk-moderate-text: #b45309;
+  --risk-high-text: #c2410c;
+  --risk-critical-text: #b91c1c;
+
+  --diff-add: #1a7f37;
+  --diff-del: #cf222e;
+
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.04), 0 1px 1px rgb(0 0 0 / 0.02);
+  --shadow-lift: 0 8px 24px -12px rgb(15 15 30 / 0.18), 0 1px 2px rgb(0 0 0 / 0.04);
+  --grid-line: rgb(9 9 11 / 0.045);
+}
+
+.dark {
+  color-scheme: dark;
+  --canvas: #09090b;
+  --surface: #111113;
+  --surface-2: #18181b;
+  --surface-3: #232327;
+  --line: #26262b;
+  --line-strong: #34343a;
+  --fg: #fafafa;
+  --fg-muted: #a1a1aa;
+  --fg-subtle: #8b8b95;
+
+  --accent: #6366f1;
+  --accent-hover: #818cf8;
+  --accent-fg: #ffffff;
+  --accent-soft: rgb(99 102 241 / 0.12);
+  --accent-line: rgb(129 140 248 / 0.35);
+  --accent-text: #a5b4fc;
+
+  --risk-low: #34d399;
+  --risk-moderate: #fbbf24;
+  --risk-high: #fb923c;
+  --risk-critical: #f87171;
+  --risk-low-soft: rgb(52 211 153 / 0.1);
+  --risk-moderate-soft: rgb(251 191 36 / 0.1);
+  --risk-high-soft: rgb(251 146 60 / 0.12);
+  --risk-critical-soft: rgb(248 113 113 / 0.12);
+  --risk-low-text: #6ee7b7;
+  --risk-moderate-text: #fcd34d;
+  --risk-high-text: #fdba74;
+  --risk-critical-text: #fca5a5;
+
+  --diff-add: #3fb950;
+  --diff-del: #f85149;
+
+  --shadow-card: 0 0 0 1px rgb(255 255 255 / 0.01);
+  --shadow-lift: 0 12px 32px -16px rgb(0 0 0 / 0.7);
+  --grid-line: rgb(255 255 255 / 0.035);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-line: var(--accent-line);
+  --color-accent-text: var(--accent-text);
+  --color-risk-low: var(--risk-low);
+  --color-risk-moderate: var(--risk-moderate);
+  --color-risk-high: var(--risk-high);
+  --color-risk-critical: var(--risk-critical);
+  --color-diff-add: var(--diff-add);
+  --color-diff-del: var(--diff-del);
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+
+  --shadow-card: var(--shadow-card);
+  --shadow-lift: var(--shadow-lift);
+
+  --animate-rise: rise 420ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-grow-x: grow-x 700ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-uncover: uncover 900ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-slide-from-start: slide-from-start 900ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-fade: fade 300ms ease-out both;
+  --animate-pulse-soft: pulse-soft 1.6s ease-in-out infinite;
+  --animate-travel: travel 2.8s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  --animate-shimmer: shimmer 1.8s linear infinite;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@keyframes rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes grow-x {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+/* `from`-only keyframes animate toward the element's own inline value. */
+@keyframes uncover {
+  from { transform: scaleX(1); }
+}
+@keyframes slide-from-start {
+  from { left: 0%; }
+}
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+@keyframes travel {
+  0% { left: 0%; opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to { background-position: 200% 0; }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+  }
+  body {
+    background: var(--canvas);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv11";
+  }
+  ::selection {
+    background: var(--accent-line);
+  }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@utility bg-grid {
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 1ms !important;
+  }
 }
