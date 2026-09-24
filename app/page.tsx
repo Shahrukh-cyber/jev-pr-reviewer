@@ -1,8 +1,10 @@
 import { PrReviewer } from "@/components/pr-review/pr-reviewer";
-import { SiteFooter } from "@/components/site/footer";
+import { CreatorCard } from "@/components/branding/creator-card";
+import { CreatorFooter } from "@/components/branding/creator-footer";
 import { SiteHeader } from "@/components/site/header";
 import { Hero } from "@/components/site/hero";
 import { HowItWorks } from "@/components/site/how-it-works";
+import { getCreator } from "@/lib/branding/creator";
 import { readRepositoryConfig } from "@/lib/reviews/server";
 
 export default async function Home({ searchParams }: PageProps<"/">) {
@@ -10,9 +12,11 @@ export default async function Home({ searchParams }: PageProps<"/">) {
   const mode = params.mode === "live" ? "live" : "demo";
   const pr = typeof params.pr === "string" && /^\d{1,9}$/.test(params.pr) ? Number(params.pr) : null;
 
+  const creator = getCreator();
+
   return (
     <>
-      <SiteHeader />
+      <SiteHeader creator={creator} />
       <main id="top" className="flex-1">
         <Hero />
         <PrReviewer
@@ -21,8 +25,9 @@ export default async function Home({ searchParams }: PageProps<"/">) {
           initialMode={mode}
           initialPr={pr}
         />
+        <CreatorCard creator={creator} />
       </main>
-      <SiteFooter />
+      <CreatorFooter creator={creator} />
     </>
   );
 }

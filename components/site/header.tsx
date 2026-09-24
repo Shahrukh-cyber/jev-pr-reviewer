@@ -1,4 +1,6 @@
+import { CreatorBadge } from "@/components/branding/creator-badge";
 import { JevMark } from "@/components/ui/icons";
+import type { Creator } from "@/lib/branding/creator";
 import { ThemeToggle } from "./theme-toggle";
 
 const NAV = [
@@ -7,7 +9,7 @@ const NAV = [
   { href: "#api", label: "API / Raw Decision" },
 ];
 
-export function SiteHeader() {
+export function SiteHeader({ creator }: { creator: Creator }) {
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-canvas/80 backdrop-blur-md supports-[backdrop-filter]:bg-canvas/70">
       <div className="mx-auto flex h-14 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
@@ -36,8 +38,10 @@ export function SiteHeader() {
             ))}
           </ul>
         </nav>
-        <div className="ml-auto md:ml-2">
+        <div className="ml-auto flex items-center gap-2 md:ml-2">
           <ThemeToggle />
+          <span aria-hidden className="h-6 w-px bg-line" />
+          <CreatorBadge creator={creator} />
         </div>
       </div>
       <nav aria-label="Primary mobile" className="border-t border-line md:hidden">
