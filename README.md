@@ -154,3 +154,8 @@ Both modes use the same `Jev response → toReviewModel → ReviewBody` path, so
 - **Interpretation is explicit.** "Likely / uncertain" bands and workflow labels are derived from thresholds in `lib/review/config.ts`, and the UI and comment say so.
 - **Secrets stay on the server.** The browser talks only to this app's API routes. Upstream error details are logged server-side and never forwarded.
 - **Honest states.** Loading stages, *Analyzing*, *New commits*, and *Review unavailable* reflect events that actually happened. Every review shows which commit it was for and when it was analyzed.
+
+## Contributors
+
+- **Muhammad Shahrukh Khan** — AI Full Stack Engineer. Creator of Jev PR Reviewer.
+- **Claude** (Anthropic), via [Claude Code](https://claude.com/claude-code) — pair-programmed the dashboard, the GitHub Action, and the tests. Its commits carry a `Co-Authored-By: Claude` trailer.
